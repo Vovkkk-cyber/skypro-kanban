@@ -1,7 +1,7 @@
 import React from "react";
 
 import "./Header.css";
-import UserProfile from "../popups/PopUser/PopUser.jsx";
+import UserProfile from "../Pops/PopUser/PopUser.jsx";
 
 function Header() {
     return (

@@ -3,8 +3,8 @@ import Header from "../Header/Header.jsx";
 import cardList from "../../data.js";
 import Column from "../Column/Column.jsx";
 import "./App.css";
-import PopBrowse from "../popups/PopBrowse/PopBrowse.jsx";
-import PopNewCard from "../popups/PopNewCard/PopNewCard.jsx";
+import PopBrowse from "../Pops/PopBrowse/PopBrowse.jsx";
+import PopNewCard from "../Pops/PopNewCard/PopNewCard.jsx";
 
 const columns = [
     "Без статуса",

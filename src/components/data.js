@@ -1,4 +1,3 @@
-
 export const cardList = [
     {
         id: 1,
