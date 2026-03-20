@@ -1,13 +1,19 @@
 import styled from "styled-components";
 
-export const Container = styled.div`
+export const MainColumn = styled.div`
   width: 20%;
   margin: 0 auto;
   display: block;
+
+  @media screen and (max-width: 1200px) {
+    width: 100%;
+    margin: 0 auto;
+    display: block;
+  }
 `;
 
-export const Title = styled.div`
-  padding: 0 10px;
+export const ColumnTitle = styled.div`
+  padding: 0px 10px;
   margin: 15px 0;
 
   & p {
@@ -19,12 +25,14 @@ export const Title = styled.div`
   }
 `;
 
-export const CardsContainer = styled.div`
+export const Cards = styled.div`
   width: 100%;
   display: block;
   position: relative;
-`;
 
-export const EmptyColumnMessage = styled.p`
-  color: #94a6be;
+  @media screen and (max-width: 1200px) {
+    width: 100%;
+    display: flex;
+    overflow-y: auto;
+  }
 `;

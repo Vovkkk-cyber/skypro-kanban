@@ -1,23 +1,49 @@
-import React from "react";
-
-import "./Header.styled.js";
-import UserProfile from "../Pops/PopUser/PopUser.jsx";
-
+import { useNavigate, useLocation } from "react-router-dom";
+import { PopUser } from "../PopUser/PopUser";
+import { useState, useContext } from "react";
 import {
-  HeaderContainer,
-  ContainerH,
+  HeaderStyle,
   HeaderBlock,
   HeaderLogo,
   HeaderNav,
-  HeaderBtn,
-} from "./Header.styled.js";
+  HeaderBtnMainNew,
+  HeaderUser,
+  PopUserOverlay,
+} from "../Header/Header.styled";
+import { AuthContext } from "../../context/AuthContext";
 
-function Header() {
+export const Header = () => {
+  const location = useLocation(); // Добавляем useLocation для проверки пути
+
+  // Создаем состояние для управления видимостью PopUser. Изначально PopUser скрыт, поэтому устанавливаем false
+  const [isPopUserVisible, setIsPopUserVisible] = useState(false);
+
+  // Получаем user и logout из AuthContext
+  const { user, logout } = useContext(AuthContext);
+
+  // Функция, которая будет переключать видимость PopUser
+  const togglePopUserVisibility = () => {
+    setIsPopUserVisible(!isPopUserVisible);
+  };
+
+  // Функция для закрытия PopUser
+  const closePopUser = () => {
+    setIsPopUserVisible(false);
+  };
+
+  const navigate = useNavigate();
+
+  const openPopNewCardModal = () => {
+    navigate("/new-card");
+  };
+
+  const userName = user?.name || "Пользователь";
+
   return (
-    <HeaderContainer>
-      <ContainerH>
+    <HeaderStyle>
+      <div className="container">
         <HeaderBlock>
-          <HeaderLogo HeaderLogo className="_light">
+          <HeaderLogo className="_show _light">
             <a href="" target="_self">
               <img src="images/logo.png" alt="logo" />
             </a>
@@ -28,15 +54,34 @@ function Header() {
             </a>
           </HeaderLogo>
           <HeaderNav>
-            <HeaderBtn className="_hover01" id="btnMainNew">
-              <a href="#popNewCard">Создать новую задачу</a>
-            </HeaderBtn>
-            <UserProfile />
+            <HeaderBtnMainNew id="btnMainNew" onClick={openPopNewCardModal}>
+              Создать новую задачу
+            </HeaderBtnMainNew>
+            {/* Добавляем обработчик onClick для переключения видимости PopUser */}
+            <HeaderUser onClick={togglePopUserVisibility}>
+              {userName}
+            </HeaderUser>
+
+            {/* Условный рендеринг PopUser и его обертки */}
+            {isPopUserVisible &&
+              location.pathname !== "/exit" && ( // Если isPopUserVisible true, то рендерим следующее
+                <PopUserOverlay onClick={closePopUser}>
+                  {/* Добавляем новый класс для фонового слоя // Клик по фоновому
+                слою закрывает PopUser */}
+                  {/* Останавливаем распространение события клика, чтобы клик по PopUser не закрывал его */}
+                  <div onClick={(e) => e.stopPropagation()}>
+                    <PopUser
+                      $isVisible={isPopUserVisible}
+                      // Передаем logout из контекста
+                      onLogout={logout}
+                      onClose={closePopUser}
+                    />
+                  </div>
+                </PopUserOverlay>
+              )}
           </HeaderNav>
         </HeaderBlock>
-      </ContainerH>
-    </HeaderContainer>
+      </div>
+    </HeaderStyle>
   );
-}
-
-export default Header;
+};

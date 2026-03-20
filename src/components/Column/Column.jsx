@@ -1,27 +1,24 @@
-import React from "react";
-import Card from "../Card/Card.jsx";
-import {
-  Container,
-  Title,
-  CardsContainer,
-  EmptyColumnMessage,
-} from "./Column.styled.js";
+import { Card } from "../Card/Card";
+import { MainColumn, ColumnTitle, Cards } from "../Column/Column.styled";
 
-const Column = ({ title, cards }) => {
+export const Column = ({ title, cardList }) => {
   return (
-    <Container>
-      <Title>
+    <MainColumn>
+      <ColumnTitle>
         <p>{title}</p>
-      </Title>
-      <CardsContainer>
-        {cards.length > 0 ? (
-          cards.map((card) => <Card key={card.id} card={card} />)
-        ) : (
-          <EmptyColumnMessage>Нет задач</EmptyColumnMessage>
-        )}
-      </CardsContainer>
-    </Container>
+      </ColumnTitle>
+      <Cards>
+        {/* Используем map для рендеринга каждой карточки из cardList */}
+        {cardList.map((card) => (
+          <Card
+            key={card._id}
+            _id={card._id}
+            topic={card.topic}
+            title={card.title}
+            date={card.date}
+          />
+        ))}
+      </Cards>
+    </MainColumn>
   );
 };
-
-export default Column;
