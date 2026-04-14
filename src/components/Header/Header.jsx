@@ -1,87 +1,85 @@
-import { useNavigate, useLocation } from "react-router-dom";
-import { PopUser } from "../PopUser/PopUser";
-import { useState, useContext } from "react";
-import {
-  HeaderStyle,
-  HeaderBlock,
-  HeaderLogo,
-  HeaderNav,
-  HeaderBtnMainNew,
-  HeaderUser,
-  PopUserOverlay,
-} from "../Header/Header.styled";
+import { useState, useEffect, useRef, useContext } from "react";
+import { PopUser } from "../popups/popUser/PopUser";
+import { SHeader, SHeaderContainer, SHeaderBlock, SHeaderLogo, SHeaderLogoLight, SHeaderLogoDark, SHeaderNavigation, SButtonWrapper, SHeaderLink, SPopUserWrapper } from "./Header.styled";
+import { Button } from "../button/Button";
+import { Link } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
+import { ThemeContext } from "../../context/ThemeContext";
+
 
 export const Header = () => {
-  const location = useLocation(); // Добавляем useLocation для проверки пути
+  const { currentTheme } = useContext(ThemeContext)
 
-  // Создаем состояние для управления видимостью PopUser. Изначально PopUser скрыт, поэтому устанавливаем false
-  const [isPopUserVisible, setIsPopUserVisible] = useState(false);
+  const [isPopUserOpen, setIsPopUserOpen] = useState(false);
+  const [isActive, setIsActive] = useState(false);
 
-  // Получаем user и logout из AuthContext
-  const { user, logout } = useContext(AuthContext);
+  const popUserRef = useRef(null);
+  const headerLinkRef = useRef(null);
 
-  // Функция, которая будет переключать видимость PopUser
-  const togglePopUserVisibility = () => {
-    setIsPopUserVisible(!isPopUserVisible);
+  const { user } = useContext(AuthContext);
+  const userName = user.name;
+
+
+  const handleClick = () => {
+    setIsPopUserOpen(!isPopUserOpen);
+    setIsActive(!isActive);
   };
 
-  // Функция для закрытия PopUser
-  const closePopUser = () => {
-    setIsPopUserVisible(false);
+  const handleOutsideClick = (event) => {
+    if (popUserRef.current && !popUserRef.current.contains(event.target) && headerLinkRef.current && !headerLinkRef.current.contains(event.target)) {
+      setIsPopUserOpen(false); // закрыть PopUser, если клик вне его 
+      setIsActive(false);
+    }
   };
 
-  const navigate = useNavigate();
+  useEffect(() => {
+    // добавить обработчик клика вне окна
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => {
+      // удалить обработчик клика вне окна при размонтировании компонента
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, []);
 
-  const openPopNewCardModal = () => {
-    navigate("/new-card");
-  };
-
-  const userName = user?.name || "Пользователь";
 
   return (
-    <HeaderStyle>
-      <div className="container">
-        <HeaderBlock>
-          <HeaderLogo className="_show _light">
-            <a href="" target="_self">
-              <img src="images/logo.png" alt="logo" />
-            </a>
-          </HeaderLogo>
-          <HeaderLogo className="_dark">
-            <a href="" target="_self">
-              <img src="images/logo_dark.png" alt="logo" />
-            </a>
-          </HeaderLogo>
-          <HeaderNav>
-            <HeaderBtnMainNew id="btnMainNew" onClick={openPopNewCardModal}>
-              Создать новую задачу
-            </HeaderBtnMainNew>
-            {/* Добавляем обработчик onClick для переключения видимости PopUser */}
-            <HeaderUser onClick={togglePopUserVisibility}>
-              {userName}
-            </HeaderUser>
-
-            {/* Условный рендеринг PopUser и его обертки */}
-            {isPopUserVisible &&
-              location.pathname !== "/exit" && ( // Если isPopUserVisible true, то рендерим следующее
-                <PopUserOverlay onClick={closePopUser}>
-                  {/* Добавляем новый класс для фонового слоя // Клик по фоновому
-                слою закрывает PopUser */}
-                  {/* Останавливаем распространение события клика, чтобы клик по PopUser не закрывал его */}
-                  <div onClick={(e) => e.stopPropagation()}>
-                    <PopUser
-                      $isVisible={isPopUserVisible}
-                      // Передаем logout из контекста
-                      onLogout={logout}
-                      onClose={closePopUser}
-                    />
-                  </div>
-                </PopUserOverlay>
+    <SHeader>
+      <SHeaderContainer>
+        <SHeaderBlock>
+          <SHeaderLogo>
+            <a href="/" target="_self">
+              {currentTheme === 'light' ? (
+                <SHeaderLogoLight src="/images/logo.png" alt="logo" />
+              ) : (
+                <SHeaderLogoDark src="/images/logo_dark.png" alt="logo" />
               )}
-          </HeaderNav>
-        </HeaderBlock>
-      </div>
-    </HeaderStyle>
+            </a>
+          </SHeaderLogo>
+
+          <SHeaderNavigation>
+            <SButtonWrapper>
+              <Link to="/card/add">
+                <Button href="#popNewCard" width="178px" type="primary" text="Создать новую задачу" disabled={false}>
+                </Button>
+              </Link>
+            </SButtonWrapper>
+            <SHeaderLink
+              href="#user-set-target"
+              onClick={handleClick}
+              $isActive={isActive}
+              ref={headerLinkRef}
+            >
+              {userName}
+            </SHeaderLink>
+            <SPopUserWrapper
+              ref={popUserRef}
+              $isActive={isActive}
+            >
+              <PopUser setIsPopUserOpen={setIsPopUserOpen} setIsActive={setIsActive}/>
+            </SPopUserWrapper>
+          </SHeaderNavigation>
+        </SHeaderBlock>
+      </SHeaderContainer>
+    </SHeader >
   );
 };

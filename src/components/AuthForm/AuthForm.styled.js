@@ -1,142 +1,81 @@
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 
-export const AuthBg = styled.div`
-  width: 100%;
-  height: 100vh;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: rgba(9, 30, 63, 0.3);
-`;
 
-export const AuthModal = styled.div`
+export const SPageBackground = styled.div`
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--bg-primary);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    `;
+
+export const SWrapper = styled.div`
   width: 368px;
-  min-height: ${({ $isSignUp }) => ($isSignUp ? "345px" : "329px")};
-  height: auto;
-  padding: 50px 60px 50px 60px;
-  background-color: #ffffff;
+  background-color: var(--bg-secondary);
+  border: 0.7px solid var(--borders);
   border-radius: 10px;
-  position: relative;
-  box-shadow: 0px 4px 40px -10px rgba(0, 0, 0, 0.1);
-
-  @media (max-width: 375px) {
-    width: 100%;
-    padding: 20px;
-  }
-`;
-
-export const AuthWrapper = styled.div`
-  /* Wrapper, который содержит заголовок и форму */
-  width: 100%;
-  // margin: 50px 60px 50px 60px;
+  padding: 50px 60px;
+  box-shadow: 0px 4px 67px -12px #00000021;
   display: flex;
+  justify-content: center;
   flex-direction: column;
   align-items: center;
+  gap: 20px;
+
 `;
 
-export const AuthTitle = styled.h2`
-  color: #000000;
-  font-family: Roboto;
-  font-weight: 700;
+export const STitle = styled.p`
   font-size: 20px;
-  line-height: 150%;
-  letter-spacing: -0.03em;
-  text-align: center;
+  font-weight: 700;
 `;
 
-export const AuthFormstyle = styled.form`
-  width: 100%;
+export const SForm = styled.form`
+`;
+
+export const SInputWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-bottom: 7px;
+`;
+
+export const SFooterWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-`;
-
-export const InputWrapper = styled.div`
-  width: 248px;
-  display: flex;
-  flex-direction: column;
-  gap: 7px; /* Отступ между инпутами */
-  margin-bottom: 20px; /* Отступ после группы инпутов перед кнопкой */
+  line-height: 150%;
   margin-top: 20px;
 `;
 
-export const AuthInput = styled.input`
-  width: 100%;
-  height: 30px;
-  border-radius: 8px;
-  border: 0.7px solid
-    ${({ $error }) => ($error ? "red" : "rgba(148, 166, 190, 0.4)")};
-  outline: none;
-  padding: 4.5px 10px;
-  font-family: Roboto;
+export const SFooterText = styled.p`
+  font-size: 14px;
   font-weight: 400;
-  font-size: 14px;
-  line-height: 150%;
-  letter-spacing: -0.02em;
-
-  &::placeholder {
-    color: #94a6be;
-  }
+  color: rgba(148, 166, 190, 0.4); 
 `;
 
-export const ButtonEnter = styled.button`
-  width: 248px;
-  height: 30px;
-  background-color: #565eef;
-  border-radius: 4px;
-  color: #ffffff;
+export const SFooterLink = styled(Link)`
   font-size: 14px;
-  font-weight: 500;
-  line-height: 21px;
-  letter-spacing: -0.14px;
-  border: none;
+  font-weight: 400;
+  text-decoration: underline;
+  color: rgba(148, 166, 190, 0.4);
   cursor: pointer;
-  transition: all 0.3s ease-in-out;
-
-  &:hover {
-    background-color: #33399b;
-  }
 `;
 
-export const FormGroup = styled.div`
+export const SErrorMessageWrapper = styled.div`
   display: flex;
-  flex-direction: ${({ $isSignUp }) => ($isSignUp ? "row" : "column")};
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  margin-top: 20px;
-  gap: ${({ $isSignUp }) => ($isSignUp ? "5px" : "0px")};
-
-  p {
-    color: #94a6be66;
-    line-height: 21px;
-    letter-spacing: -0.14px;
-    font-family: Roboto;
-    font-weight: 400;
-    font-size: 14px;
-  }
-
-  a {
-    color: #94a6be66;
-    line-height: 21px;
-    letter-spacing: -0.14px;
-    text-decoration: underline;
-    cursor: pointer;
-    font-family: Roboto;
-    font-weight: 400;
-    font-size: 14px;
-
-    &:hover {
-      color: #565eef;
-    }
-  }
+  gap: 7px;
+  margin-bottom: 20px;
 `;
 
-export const ErrorText = styled.p`
-  color: #f84d4d;
+export const SErrorMessageText = styled.p`
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
-  margin: 7px 0 20px 0;
-  font-family: Arial;
+  font-weight: 400;
+  color: #F84D4D;
+  text-align: center;
+  line-height: 150%;
 `;

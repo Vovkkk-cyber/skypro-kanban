@@ -1,203 +1,75 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useState, useContext } from "react";
-import { GlobalStyle } from "../GlobalStyles.js";
-import {
-  AuthBg,
-  AuthModal,
-  AuthWrapper,
-  AuthTitle,
-  AuthFormstyle,
-  InputWrapper,
-  AuthInput,
-  ButtonEnter,
-  FormGroup,
-  ErrorText,
-} from "./AuthForm.styled.js";
-// import { signIn } from "../../services/auth.js";
-// import { signUp } from "../../services/auth.js";
-import { AuthContext } from "../../context/AuthContext.js";
+import { SPageBackground, SWrapper, STitle, SForm, SInputWrapper, SFooterWrapper, SFooterText, SFooterLink, SErrorMessageWrapper, SErrorMessageText } from "./AuthForm.styled";
+import { Input } from "../Input/Input";
+import { Button } from "../button/Button";
+import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
+
 
 export const AuthForm = ({ isSignUp }) => {
   const navigate = useNavigate();
 
-  const { login, register } = useContext(AuthContext);
+  const {
+    handleChange, handleLogin,
+    formData, errors,
+    error,
+    resetError
+  } = useContext(AuthContext);
 
-  // состояние полей
-  const [formData, setFormData] = useState({
-    name: "",
-    login: "",
-    password: "",
-  });
 
-  // состояние ошибок
-  const [errors, setErrors] = useState({
-    name: false,
-    login: false,
-    password: false,
-  });
-
-  // состояние текста ошибки, чтобы показать её пользователю
-  const [error, setError] = useState("");
-
-  // функция валидации
-  const validateForm = () => {
-    const newErrors = { name: false, login: false, password: false };
-    let isValid = true;
-
-    if (isSignUp && !formData.name.trim()) {
-      newErrors.name = true;
-      isValid = false;
-    }
-
-    if (!formData.login.trim()) {
-      newErrors.login = true;
-      isValid = false;
-    }
-
-    if (!formData.password.trim()) {
-      newErrors.password = true;
-      isValid = false;
-    }
-
-    setErrors(newErrors);
-    console.log("Ошибки:", newErrors);
-    return isValid;
-  };
-
-  // функция, которая отслеживает в полях изменения
-  // и меняет состояние компонента
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-    setErrors({ ...errors, [name]: false });
-    setError("");
-  };
-
-  // функция отправки формы
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateForm()) {
-      // если у нас форма не прошла валидацию, то дальше не продолжаем
-      return;
-    }
-
-    setIsSubmitting(true); // Включаем кнопку загрузки перед запросом
-
-    try {
-      if (!isSignUp) {
-        await login({ login: formData.login, password: formData.password });
-      } else {
-        await register(formData);
-      }
-
-      // Если вход/регистрация успешны, navigate на главную страницу
+    const success = await handleLogin(isSignUp);
+    if (success) {
       navigate("/");
-    } catch {
-      // Обработка ошибок от сервера
-      const serverError = isSignUp
-        ? "Введенные вами данные не корректны. Чтобы завершить регистрацию, введите данные корректно и повторите попытку."
-        : "Введенные вами данные не распознаны. Проверьте свой логин и пароль и повторите попытку входа.";
-
-      setError(serverError);
-    } finally {
-      setIsSubmitting(false); // Выключаем кнопку после завершения запроса (успех или ошибка)
     }
   };
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   return (
-    <>
-      <GlobalStyle />
-      <AuthBg>
-        <AuthModal $isSignUp={isSignUp}>
-          <AuthWrapper>
-            <AuthTitle>{isSignUp ? "Регистрация" : "Вход"}</AuthTitle>
-            <AuthFormstyle id="form" action="#" onSubmit={handleSubmit}>
-              <InputWrapper>
-                {isSignUp && (
-                  <AuthInput
-                    $error={errors.name}
-                    type="text"
-                    name="name"
-                    id="formname"
-                    placeholder="Имя"
-                    value={formData.name}
-                    onChange={handleChange}
-                  />
-                )}
-                {/* Два инпута, которые есть на обеих страницах */}
-                <AuthInput
-                  $error={errors.login}
-                  type="text"
-                  name="login"
-                  id="formlogin"
-                  placeholder="Эл. почта"
-                  value={formData.login}
-                  onChange={handleChange}
-                />
-                <AuthInput
-                  $error={errors.password}
-                  type="password"
-                  name="password"
-                  id="formpassword"
-                  placeholder="Пароль"
-                  value={formData.password}
-                  onChange={handleChange}
-                />
-              </InputWrapper>
+    <SPageBackground>
+      <SWrapper style={{ height: "329px" }}>
+        <STitle>{isSignUp ? "Регистрация" : "Вход"}</STitle>
+        <SForm id="form" onSubmit={handleSubmit}>
 
-              {error && <ErrorText>{error}</ErrorText>}
+          <SInputWrapper>
+            {isSignUp && (<Input error={errors.name} type="text" placeholder="Имя" name="name" value={formData.name} onChange={handleChange} />)}
+            <Input error={errors.login} type="text" placeholder="Эл. почта" name="login" value={formData.login} onChange={handleChange} />
+            <Input error={errors.password} type="password" placeholder="Пароль" name="password" value={formData.password} onChange={handleChange} />
+          </SInputWrapper>
 
-              <ButtonEnter
-                type="secondary"
-                disabled={
-                  isSubmitting ||
-                  !formData.login.trim() ||
-                  !formData.password.trim() ||
-                  (isSignUp && !formData.name.trim())
-                }
-                style={{
-                  backgroundColor:
-                    isSubmitting ||
-                    !formData.login.trim() ||
-                    !formData.password.trim() ||
-                    (isSignUp && !formData.name.trim())
-                      ? "#94A6BE"
-                      : "#565EEF",
-                  color: "#ffffff",
-                  cursor:
-                    isSubmitting ||
-                    !formData.login.trim() ||
-                    !formData.password.trim() ||
-                    (isSignUp && !formData.name.trim())
-                      ? "not-allowed"
-                      : "pointer",
-                }}
+          <SErrorMessageWrapper><SErrorMessageText>{error}</SErrorMessageText></SErrorMessageWrapper>
+
+          <Button text={isSignUp ? "Зарегистрироваться" : "Войти"} type="primary" disabled={error} />
+
+          {!isSignUp && (
+            <SFooterWrapper>
+              <SFooterText>Нужно зарегистрироваться?</SFooterText>
+              <SFooterLink
+                to="/registration"
+                onClick={resetError}
               >
-                {isSignUp ? "Зарегистрироваться" : "Войти"}
-              </ButtonEnter>
+                Регистрируйтесь здесь
+              </SFooterLink>
+            </SFooterWrapper>
+          )}
 
-              {!isSignUp && (
-                <FormGroup $isSignUp={isSignUp}>
-                  <p>Нужно зарегистрироваться?</p>
-                  <Link to="/sign-up">Регистрируйтесь здесь</Link>
-                </FormGroup>
-              )}
+          {isSignUp && (
+            <SFooterWrapper>
+              <SFooterText>
+                Уже есть аккаунт?
+                <SFooterLink
+                  to="/login"
+                  onClick={resetError}
+                >
+                  Войдите здесь
+                </SFooterLink>
+              </SFooterText>
+            </SFooterWrapper>
+          )}
 
-              {isSignUp && (
-                <FormGroup $isSignUp={isSignUp}>
-                  <p>Уже есть аккаунт?</p>
-                  <Link to="/sign-in">Войдите здесь</Link>
-                </FormGroup>
-              )}
-            </AuthFormstyle>
-          </AuthWrapper>
-        </AuthModal>
-      </AuthBg>
-    </>
-  );
-};
+        </SForm>
+      </SWrapper>
+    </SPageBackground>
+  )
+}
