@@ -1,52 +1,50 @@
-
-import React, {useState, useEffect} from "react";
-import {Route, Routes} from "react-router-dom";
-import {AppLoadingMessage} from "./App/App.styled.js";
-import MainPage from "../pages/Main.jsx";
-import SignInPage from "../pages/SignIn.jsx";
-import SignUpPage from "../pages/SignUp.jsx";
-import NotFoundPage from "../pages/NotFound.jsx";
-import PrivateRoute from "./PrivateRoute.jsx";
-import ViewEditTasks from "../pages/ViewEditTask.jsx";
-import AddTask from "../pages/AddTask.jsx";
-import Exit from "../pages/ExitPage.jsx";
+import { Routes, Route } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { MainPage } from "../pages/MainPage";
+import { SignInPage } from "../pages/SignInPage";
+import { SignUpPage } from "../pages/SignUpPage";
+import { CardPage } from "../pages/CardPage";
+import { NewCardPage } from "../pages/NewCardPage";
+import { ExitPage } from "../pages/ExitPage";
+import { NotFoundPage } from "../pages/NotFoundPage";
+import { PrivateRoute } from "./PrivateRoute";
 
 function AppRoutes() {
-    const [isAuth, setIsAuth] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const userInfo = localStorage.getItem("userInfo");
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 3000);
+  }, []);
 
-        if (userInfo) {
-            const parsedUser = JSON.parse(userInfo);
-            if (parsedUser?.token) {
-                // eslint-disable-next-line react-hooks/set-state-in-effect
-                setIsAuth(true);
-            }
-        }
+  // Добавляем состояние авторизации
+  const [isAuth, setIsAuth] = useState(() => !!localStorage.getItem("token"));
 
-        setIsLoading(false);
-    }, []);
-
-    if (isLoading) {
-        return <AppLoadingMessage>Проверка авторизации...</AppLoadingMessage>;
-    }
-
-    return (<Routes>
-        {/* Приватные маршруты */}
-        <Route element={<PrivateRoute isAuth={isAuth}/>}>
-            <Route path="/" element={<MainPage/>}/>
-            <Route path="/add-task" element={<AddTask/>}/>
-            <Route path="/cards/:id" element={<ViewEditTasks/>}/>
-            <Route path="/exit" element={<Exit setIsAuth={setIsAuth}/>}/>
+  return (
+    <Routes>
+      <Route element={<PrivateRoute isAuth={isAuth} />}>
+        {/* Главная страница */}
+        <Route
+          path="/"
+          element={<MainPage loading={loading} setIsAuth={setIsAuth} />}
+        >
+          {/* Добавление задачи */}
+          <Route path="/new-card" element={<NewCardPage />} />
+          {/* Просмотр и редактирование задачи */}
+          <Route path="/card/:id" element={<CardPage />} />
+          {/* Страница выхода */}
+          <Route path="/exit" element={<ExitPage setIsAuth={setIsAuth} />} />
         </Route>
-
-        {/* Открытые маршруты */}
-        <Route path="/sign-in" element={<SignInPage setIsAuth={setIsAuth}/>}/>
-        <Route path="/sign-up" element={<SignUpPage setIsAuth={setIsAuth}/>}/>
-        <Route path="/*" element={<NotFoundPage/>}/>
-    </Routes>);
+      </Route>
+      {/* Страница входа */}
+      <Route path="/sign-in" element={<SignInPage setIsAuth={setIsAuth} />} />
+      {/* Страница регистрации */}
+      <Route path="/sign-up" element={<SignUpPage setIsAuth={setIsAuth} />} />
+      {/* Страница 404 (любой несуществующий маршрут) */}
+      <Route path="*" element={<NotFoundPage />} />
+    </Routes>
+  );
 }
 
 export default AppRoutes;

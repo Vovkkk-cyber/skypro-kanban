@@ -4,79 +4,62 @@ export const cardList = [
     topic: "Web Design",
     title: "Название задачи",
     date: "30.10.23",
-    status: "Без статуса",
+    status: "БЕЗ СТАТУСА", // Соответствует первой колонке
   },
   {
     id: 2,
     topic: "Research",
-    title: "Название задачи",
-    date: "30.10.23",
-    status: "Без статуса",
+    title: "Новая задача",
+    date: "25.11.23",
+    status: "НУЖНО СДЕЛАТЬ", // Соответствует второй колонке
   },
   {
     id: 3,
-    topic: "Web Design",
-    title: "Название задачи",
-    date: "30.10.23",
-    status: "Без статуса",
+    topic: "Copywriting",
+    title: "Написать статью о React",
+    date: "15.12.23",
+    status: "В РАБОТЕ", // Соответствует третьей колонке
   },
   {
     id: 4,
-    topic: "Copywriting",
-    title: "Название задачи",
-    date: "30.10.23",
-    status: "Без статуса",
+    topic: "Web Design",
+    title: "Адаптивная верстка",
+    date: "01.01.24",
+    status: "ТЕСТИРОВАНИЕ", // Соответствует четвертой колонке
   },
   {
     id: 5,
     topic: "Research",
-    title: "Название задачи",
-    date: "30.10.23",
-    status: "Без статуса",
+    title: "Изучить хуки в React",
+    date: "10.01.24",
+    status: "ГОТОВО", // Соответствует пятой колонке
   },
   {
     id: 6,
-    topic: "Research",
-    title: "Название задачи",
-    date: "30.10.23",
-    status: "Нужно сделать",
+    topic: "Copywriting",
+    title: "Создать тексты для баннеров",
+    date: "05.11.23",
+    status: "БЕЗ СТАТУСА",
   },
   {
     id: 7,
-    topic: "Research",
-    title: "Название задачи",
-    date: "30.10.23",
-    status: "В работе",
+    topic: "Web Design",
+    title: "Дизайн главной страницы",
+    date: "20.10.23",
+    status: "БЕЗ СТАТУСА",
   },
   {
     id: 8,
-    topic: "Research",
-    title: "Название задачи",
-    date: "30.10.23",
-    status: "Тестирование",
+    topic: "Copywriting",
+    title: "Написать статью о Vue",
+    date: "04.12.23",
+    status: "ТЕСТИРОВАНИЕ", // Соответствует третьей колонке
   },
   {
     id: 9,
     topic: "Research",
-    title: "Название задачи",
-    date: "30.10.23",
-    status: "Готово",
-  },
-
-  {
-    id: 10,
-    topic: "Copywriting",
-    title: "Название задачи",
-    date: "30.10.23",
-    status: "В работе",
-  },
-  {
-    id: 11,
-    topic: "Web Design",
-    title: "Название задачи",
-    date: "30.10.23",
-    status: "В работе",
+    title: "Изучить компоненты",
+    date: "17.02.23",
+    status: "В РАБОТЕ", // Соответствует третьей колонке
   },
 ];
-
-export default cardList;
