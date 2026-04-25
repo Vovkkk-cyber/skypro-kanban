@@ -1,106 +1,88 @@
-/* eslint-disable react-hooks/set-state-in-effect */
-import { useState, useCallback, useEffect } from "react";
+import { useState } from "react";
 import { AuthContext } from "./AuthContext";
-import { signIn as apiSignIn, signUp as apiSignUp } from "../services/auth";
+import { login, registration } from "../services/auth";
+import { validateForm } from "../utils/helpers";
+
 
 export const AuthProvider = ({ children }) => {
-  // Изначально пытаемся получить состояние для хранении информации о пользователе из localStorage.
-  // Если в localStorage есть токен, считаем пользователя авторизованным.
-  const [user, setUser] = useState(() => {
+  function checkLs() {
     try {
-      const storedUserInfo = localStorage.getItem("userInfo");
-      const storedToken = localStorage.getItem("token"); // Проверяем и токен
-      if (storedUserInfo && storedToken) {
-        // Если есть и userInfo, и token, парсим userInfo
-        const parsedUserInfo = JSON.parse(storedUserInfo);
-        // Возвращаем объект пользователя, добавляя токен
-        return { ...parsedUserInfo, token: storedToken };
-      }
-    } catch (error) {
-      console.error(
-        "Ошибка при загрузке данных пользователя из localStorage:",
-        error
-      );
+      return localStorage.getItem("userInfo") ? JSON.parse(localStorage.getItem("userInfo")) : null
+    } catch {
+      return null
     }
-    return null; // Если нет данных или ошибка, пользователь не авторизован
-  });
+  }
 
-  // Новое состояние: флаг, который показывает, что проверка авторизации завершена
-  const [isAuthChecked, setIsAuthChecked] = useState(false);
+  const [user, setUser] = useState(checkLs());
 
-  // Эффект для установки isAuthChecked в true после первой проверки user
-  useEffect(() => {
-    // Этот эффект сработает один раз после инициализации user из localStorage
-    // или после первого рендера, когда user будет установлен в null.
-    // Это гарантирует, что TaskProvider не начнет загрузку, пока AuthProvider не "определится"
-    setIsAuthChecked(true);
-  }, [user]); // Зависит от user, чтобы сработать после его инициализации
+  const updateUserInfo = (userData) => {
+    setUser(userData);
 
-  // Функция для обновления информации о пользователе и сохранения в localStorage
-  // Используем useCallback, чтобы функция не пересоздавалась при каждом рендере
-  const updateUserInfo = useCallback((userData) => {
-    setUser(userData); // Обновляем состояние пользователя в React
-    if (userData && userData.token) {
-      // Если userData есть и в нем есть токен, сохраняем в localStorage
+    if (userData) {
       localStorage.setItem("userInfo", JSON.stringify(userData));
-      localStorage.setItem("token", userData.token);
     } else {
-      // Если userData нет (пользователь вышел), удаляем данные из localStorage
       localStorage.removeItem("userInfo");
-      localStorage.removeItem("token");
-    }
-  }, []); // Пустой массив зависимостей, так как функция не зависит от внешних переменных
+    };
+  }
 
-  // Функция для входа пользователя
-  const login = async ({ login: userLogin, password }) => {
+
+  const [formData, setFormData] = useState({ name: "", login: "", password: "" });
+  const [errors, setErrors] = useState({ name: false, login: false, password: false });
+  const [error, setError] = useState("");
+  const [isValid, setIsValid] = useState(true);
+
+  const handleChange = (e) => {
+    setIsValid(true);
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    setErrors({ ...errors, [name]: false });
+    setError("");
+  };
+
+  const handleLogin = async (isSignUp) => {
+    if (!validateForm(formData, isSignUp, setErrors, setError, setIsValid)) {
+      return false;
+    }
+
+    setIsValid(false);
+
     try {
-      // Вызываем вашу функцию signIn из services/auth.js
-      const data = await apiSignIn({ login: userLogin, password });
-      // Обновляем информацию о пользователе через updateUserInfo
-      updateUserInfo(data.user); // data.user содержит всю информацию, включая токен
-      return true; // Возвращаем true при успешном входе
-    } catch (error) {
-      console.error("Ошибка входа:", error);
-      updateUserInfo(null); // Сбрасываем пользователя при ошибке
-      throw error; // Перебрасываем ошибку дальше
+      const data = !isSignUp ? await login({ login: formData.login, password: formData.password }) : await registration(formData);
+
+      if (data) {
+        updateUserInfo(data);
+        return true;
+      }
+    } catch (err) {
+      setError(err.message);
+      setIsValid(false)
+      return false;
     }
   };
 
-  // Функция для регистрации пользователя
-  const register = async ({ name, login: userLogin, password }) => {
-    try {
-      // Вызываем вашу функцию signUp из services/auth.js
-      const data = await apiSignUp({ name, login: userLogin, password });
-      // Обновляем информацию о пользователе
-      updateUserInfo(data.user);
-      return true; // Возвращаем true при успешной регистрации
-    } catch (error) {
-      console.error("Ошибка регистрации:", error);
-      updateUserInfo(null); // Сбрасываем пользователя при ошибке
-      throw error; // Перебрасываем ошибку дальше
-    }
+  const handleLogout = (e) => {
+    updateUserInfo(null);
+    localStorage.removeItem("currentTheme");
+    localStorage.removeItem("themeNameToSelect");
   };
 
-  // Функция для выхода пользователя
-  const logout = () => {
-    updateUserInfo(null); // Сбрасываем информацию о пользователе
-    return true; // Возвращаем true при успешном выходе
+  const resetError = () => {
+    setError(null);
+    setIsValid(true);
   };
 
-  // Возвращаем AuthContext.Provider, который делает значения доступными для всех дочерних компонентов.
-  // user: текущий объект пользователя (или null)
-  // login: функция для входа
-  // register: функция для регистрации (добавили, так как AuthForm ее использует)
-  // logout: функция для выхода
-  // updateUserInfo: функция для принудительного обновления user (если потребуется)
+
   return (
-    <AuthContext.Provider
-      value={{ user, login, register, logout, updateUserInfo, isAuthChecked }}
-    >
-      {children}{" "}
-      {/* children - это все компоненты, которые будут обернуты AuthProvider */}
+    <AuthContext.Provider value={{
+      user, updateUserInfo,
+      handleChange, handleLogin, handleLogout,
+      formData,
+      errors,
+      error,
+      isValid,
+      resetError
+    }}>
+      {children}
     </AuthContext.Provider>
-  );
-};
-
-export default AuthProvider;
+  )
+}

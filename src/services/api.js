@@ -1,6 +1,8 @@
 import axios from "axios";
 
+
 const API_URL = "https://wedev-api.sky.pro/api/kanban";
+
 export async function fetchTasks({ token }) {
   try {
     const data = await axios.get(API_URL, {
@@ -9,34 +11,17 @@ export async function fetchTasks({ token }) {
       },
     });
     return data.data.tasks;
-    // когда работаем с axios, не забываем, что результат лежит в ключе datа
   } catch (error) {
     throw new Error(error.message);
   }
 }
 
-export async function postTask({ token, task }) {
+export async function postTask({ token, newTask }) {
   try {
-    const data = await axios.post(API_URL, task, {
+    const data = await axios.post(API_URL, newTask, {
       headers: {
         Authorization: "Bearer " + token,
-        "Content-Type": "",
-      },
-    });
-    return data.data.tasks;
-    // когда работаем с axios, не забываем, что результат лежит в ключе datа
-  } catch (error) {
-    console.error("Ошибка сервера:", error.response?.data || error.message);
-    throw new Error(error.message);
-  }
-}
-
-export async function editTask({ token, id, task }) {
-  try {
-    const data = await axios.put(`${API_URL}/${id}`, task, {
-      headers: {
-        Authorization: "Bearer " + token,
-        "Content-Type": "",
+        "Content-Type": ""
       },
     });
     return data.data.tasks;
@@ -45,12 +30,26 @@ export async function editTask({ token, id, task }) {
   }
 }
 
-export async function deleteTask({ token, id }) {
+export async function getTask({ token, id }) {
   try {
-    const data = await axios.delete(`${API_URL}/${id}`, {
+    const data = await axios.get(API_URL + id, {
       headers: {
         Authorization: "Bearer " + token,
-        "Content-Type": "text",
+        "Content-Type": ""
+      },
+    });
+    return data.data;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+export async function editTask(token, id, task ) {
+  try {
+    const data = await axios.put(API_URL + "/" + id, task, {
+      headers: {
+        Authorization: "Bearer " + token,
+        "Content-Type": ""
       },
     });
     return data.data.tasks;
@@ -58,3 +57,18 @@ export async function deleteTask({ token, id }) {
     throw new Error(error.message);
   }
 }
+
+export async function deleteTask(token, id) {
+  try {
+    const data = await axios.delete(API_URL + "/" + id, {
+      headers: {
+        Authorization: "Bearer " + token,
+        "Content-Type": "text"
+      },
+    });
+    return data.data.tasks;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+

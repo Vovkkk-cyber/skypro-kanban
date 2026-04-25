@@ -1,11 +1,15 @@
 import { createGlobalStyle } from "styled-components";
 
-export const GlobalStyle = createGlobalStyle`
 
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+export const GlobalStyle = createGlobalStyle`
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+  body {
+    font-family: "Roboto", sans-serif;
   }
 
   *:before,
@@ -13,166 +17,92 @@ export const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
   }
 
-  /* Общие стили для ссылок */
   a,
   a:visited {
     text-decoration: none;
     cursor: pointer;
   }
 
-  /* Общие стили для кнопок и элементов с классом _btn */
   button,
   ._btn {
     cursor: pointer;
     outline: none;
   }
 
-  /* Стили для элементов списка */
   ul li {
     list-style: none;
   }
 
-  /* Базовые стили для html и body */
+  
+// стили для темы
+body, body.light-theme {
+  --bg-primary: #EAEEF6;
+  --bg-secondary: #FFFFFF;
+  --bg-tertiary: #FFFFFF;
+  
+  --text-header-link: #565EEF;
+  --text-primary: #000000;
+  --text-secondary: #94A6BE;
+  --text-tertiary: #FFFFFF;
+
+  --borders: #D4DBE5;
+  --borders-button: #565EEF;
+
+  --shadow: rgba(26, 56, 101, 0.21);
+  --card-shadow: rgba(148, 166, 190, 0.4);
+  
+  --bg-web-design: #FFE4C2;
+  --bg-research: #B4FDD1;
+  --bg-copywriting: #E9D4FF;
+  --color-web-design: #FF6D00;
+  --color-research: #06B16E;
+  --color-copywriting: #9A48F1;
+}
+
+body.dark-theme {
+  --bg-primary: #151419;
+  --bg-secondary: #20202C;
+  --bg-tertiary: #202229;
+  
+  --text-header-link: #FFFFFF;
+  --text-primary: #FFFFFF;
+  --text-secondary: #94A6BE;
+  --text-tertiary: #FFFFFF;
+  
+  --borders: #4E5566;
+  --borders-button: #FFFFFF;
+  
+  --shadow: rgba(148, 166, 190, 0.4);
+  --card-shadow: rgba(148, 166, 190, 0.4);
+  
+  --bg-web-design: #FF6D00;
+  --bg-research: #06B16E;
+  --bg-copywriting: #9A48F1;
+  --color-web-design: #FFE4C2;
+  --color-research: #B4FDD1;
+  --color-copywriting: #E9D4FF;
+}
+
   html,
   body {
     width: 100%;
     height: 100%;
     font-family: "Roboto", Arial, Helvetica, sans-serif;
-    color: #000000;
+    color: var(--text-primary);
+}
+
+  input, textarea {
+    color: var(--text-primary);
+    background-color: var(--bg-primary);
+    border-color: var(--border-color);
   }
 
-  /* Стили для корневого элемента #root */
-  #root {
-    margin: 0 auto;
-    text-align: center;
+  input::placeholder, textarea::placeholder {
+    color: var(--text-secondary);
   }
 
-  /* Общие классы для макета */
-  .wrapper {
-    max-width: 100%;
-    width: 100vw;
-    min-height: 100vh;
-    overflow: hidden;
-    background-color: #eaeef6;
-  }
-
-  .container {
-    max-width: 1260px;
-    width: 100%;
-    margin: 0 auto;
-    padding: 0 30px;
-  }
-
-  ._orange {
-    background-color: #ffe4c2;
-    color: #ff6d00;
-  }
-
-  ._green {
-    background-color: #b4fdd1;
-    color: #06b16e;
-  }
-
-  ._purple {
-    background-color: #e9d4ff;
-    color: #9a48f1;
-  }
-
-  ._gray {
-    background: #94a6be;
-    color: #ffffff;
-  }
-
-  ._active-category {
-    opacity: 1 !important;
-  }
-
-  .logo {
-    height: 6em;
-    padding: 1.5em;
-    will-change: filter;
-    transition: filter 300ms;
-  }
-  .logo:hover {
-    filter: drop-shadow(0 0 2em #646cffaa);
-  }
-  .logo.react:hover {
-    filter: drop-shadow(0 0 2em #61dafbaa);
-  }
-
-  /* Анимации */
-  @keyframes logo-spin {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
-
-  @keyframes card-animation {
-    0% {
-      height: 0;
-      opacity: 0;
-    }
-    100% {
-      height: auto;
-      opacity: 1;
-    }
-  }
-
-  /* Классы для кнопок */
-  ._btn-bor {
-    border-radius: 4px;
-    border: 0.7px solid var(--palette-navy-60, #565eef);
-    outline: none;
-    background: transparent;
-    color: #565eef;
-  }
-  ._btn-bor a {
-    color: #565eef;
-  }
-
-  ._btn-bg {
-    border-radius: 4px;
-    background: #565eef;
-    border: none;
-    outline: none;
-    color: #ffffff;
-  }
-  ._btn-bg a {
-    color: #ffffff;
-  }
-
-  /* Утилитарные классы для отображения */
-  ._hide {
-    display: none;
-  }
-
-  ._dark { /* Используется для переключения темной темы логотипа */
-    display: none;
-  }
-
-  /* Стили для лоадера/сообщения о загрузке */
-  .loading-message {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    font-size: 24px;
-    color: #8B8B8B;
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    a:nth-of-type(2) .logo { /* Это очень специфично для logo, возможно, лучше к компоненту Logo */
-      animation: logo-spin infinite 20s linear;
-    }
-  }
-
-  @media screen and (max-width: 495px) {
-    .container {
-      width: 100%;
-      padding: 0 16px;
-    }
-  }
-`;
+#root {
+  min-height: 100%;
+  position: relative;
+}
+`

@@ -1,44 +1,31 @@
-import { Column } from "../Column/Column";
-// import { cardList } from "../../data";
-import { MainStyle, MainBlock, MainContent } from "../Main/Main.styled";
+import { Header } from "../header/Header";
+import { Content } from "../content/Content";
+import { SWrapper, SMock, SMessage } from "./Main.styled";
+import { Button } from "../button/Button";
+import { Link } from "react-router-dom";
+import { TasksContext } from "../../context/TasksContext";
+import { useContext } from "react";
 
-export const Main = ({ loading, tasks, error }) => {
-  const columnTitles = [
-    "БЕЗ СТАТУСА",
-    "НУЖНО СДЕЛАТЬ",
-    "В РАБОТЕ",
-    "ТЕСТИРОВАНИЕ",
-    "ГОТОВО",
-  ];
+
+export const Main = () => {
+  const {
+    tasks,
+    isLoading
+  } = useContext(TasksContext);
 
   return (
-    <MainStyle>
-      <div className="container">
-        <MainBlock>
-          {loading ? (
-            <div className="loading-message">
-              <p>Данные загружаются...</p>
-            </div>
-          ) : (
-            <MainContent>
-              {/* Используем .map() для рендеринга каждой колонки */}
-              {columnTitles.map((title) => (
-                <Column
-                  key={title}
-                  title={title}
-                  tasks={tasks}
-                  loading={loading}
-                  // Фильтруем `cardList` по статусу и передаем отфильтрованный список карточек в Column
-                  cardList={tasks.filter(
-                    (task) => task.status.toLowerCase() === title.toLowerCase()
-                  )}
-                />
-              ))}
-            </MainContent>
-          )}
-        </MainBlock>
-      </div>
-      <p>{error}</p>
-    </MainStyle>
-  );
-};
+    <SWrapper>
+      <Header />
+      {!isLoading && !tasks.length ?
+        <SMock>
+          <SMessage>У вас пока нет задач &#128123;</SMessage>
+          <Link to="/card/add">
+            <Button width="212px" type="primary" text="Создать мою первую задачу" disabled={false}>
+            </Button>
+          </Link>
+        </SMock>
+        :
+        <Content />}
+    </SWrapper>
+  )
+}
